@@ -12,12 +12,6 @@
     "username": "nidhi"
   },
   {
-    "id": 4,
-    "title": "Nidhi Backend",
-    "completed": false,
-    "username": "Nidhi_28"
-  },
-  {
     "id": 5,
     "title": "Nidhi Python",
     "completed": false,
@@ -25,32 +19,14 @@
   },
   {
     "id": 7,
-    "title": "Hello Hiral",
-    "completed": false,
-    "username": "Samyak_31"
-  },
-  {
-    "id": 7,
     "title": "Backend",
-    "completed": false,
-    "username": "Samyak_31"
-  },
-  {
-    "id": 8,
-    "title": "RestAPI",
-    "completed": false,
+    "completed": true,
     "username": "Samyak_31"
   },
   {
     "id": 9,
     "title": "FASTAPI",
-    "completed": false,
-    "username": "Samyak_31"
-  },
-  {
-    "id": 10,
-    "title": "C++",
-    "completed": false,
+    "completed": true,
     "username": "Samyak_31"
   },
   {
@@ -60,27 +36,99 @@
     "username": "Samyak_31"
   },
   {
-    "id": 12,
-    "title": "PYTHON",
+    "id": 13,
+    "title": "DJANGO",
+    "completed": true,
+    "username": "Samyak_31"
+  },
+  {
+    "id": 10,
+    "title": "hii",
     "completed": false,
     "username": "Samyak_31"
+  },
+  {
+    "id": 10,
+    "title": "Hello Nidhi",
+    "completed": false,
+    "username": "Nidhi_Jain_28"
+  },
+  {
+    "id": 11,
+    "title": "Hello Backend",
+    "completed": false,
+    "username": "Nidhi_Jain_28"
+  },
+  {
+    "id": 12,
+    "title": "Hello Frontend",
+    "completed": true,
+    "username": "Nidhi_Jain_28"
   },
   {
     "id": 13,
-    "title": "DJANGO",
+    "title": "Hello Python",
     "completed": false,
-    "username": "Samyak_31"
+    "username": "Nidhi_Jain_28"
   },
   {
     "id": 14,
-    "title": "DRF",
+    "title": "Hello Java",
     "completed": false,
-    "username": "Samyak_31"
+    "username": "Nidhi_Jain_28"
   },
   {
-    "id": 14,
-    "title": "Frontend",
+    "id": 15,
+    "title": "Hello Galaxy",
     "completed": false,
-    "username": "Samyak_31"
+    "username": "Nidhi_Jain_28"
+  },
+  {
+    "id": 16,
+    "title": "Hello Samayk",
+    "completed": true,
+    "username": "Nidhi_Jain_28"
+  },
+  {
+    "id": 17,
+    "title": "Hello DJANGO",
+    "completed": false,
+    "username": "Nidhi_Jain_28"
+  },
+  {
+    "id": 18,
+    "title": "Hello CSK",
+    "completed": false,
+    "username": "Nidhi_Jain_28"
+  },
+  {
+    "id": 19,
+    "title": "Nidhi C++",
+    "completed": false,
+    "username": "Nidhi_28"
+  },
+  {
+    "id": 21,
+    "title": "Nidhi Java",
+    "completed": false,
+    "username": "Nidhi_28"
+  },
+  {
+    "id": 22,
+    "title": "Nidhi Frontend",
+    "completed": false,
+    "username": "Nidhi_28"
+  },
+  {
+    "id": 23,
+    "title": "Nidhi RestApi",
+    "completed": false,
+    "username": "Nidhi_28"
+  },
+  {
+    "id": 23,
+    "title": "Nidhi School",
+    "completed": false,
+    "username": "Nidhi_28"
   }
 ]

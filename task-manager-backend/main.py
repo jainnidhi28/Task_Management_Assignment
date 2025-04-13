@@ -107,13 +107,13 @@ def get_tasks(username: str):
     return [task for task in tasks if task["username"] == username]
 
 @app.put("/tasks/complete/{task_id}")
-def complete_task(task_id: int):
+async def complete_task(task_id: int):
     tasks = read_data(TASKS_FILE)
     for task in tasks:
         if task["id"] == task_id:
             task["completed"] = not task["completed"]  # Toggle completion status
             write_data(TASKS_FILE, tasks)
-            return task  # Return the updated task
+            return {"success": True, "task": task}
     raise HTTPException(status_code=404, detail="Task not found")
 
 @app.delete("/tasks/{task_id}")
@@ -127,23 +127,22 @@ def delete_task(task_id: int):
     raise HTTPException(status_code=404, detail="Task not found")
 
 @app.put("/tasks/{task_id}")
-def update_task(task_id: int, task: Task):
+async def update_task(task_id: int, task: Task):
     tasks = read_data(TASKS_FILE)
     for i, t in enumerate(tasks):
         if t["id"] == task_id:
             # Validate input
-            if task.title is None:
-                raise HTTPException(status_code=400, detail="Title cannot be null")
+            if not task.title or not task.title.strip():
+                raise HTTPException(status_code=400, detail="Title cannot be empty")
             
-            # Preserve the existing username
-            task.username = t["username"]
-            # Update only the title and completed status
+            # Update the task while preserving the username and id
             tasks[i] = {
                 "id": task_id,
-                "title": task.title,
-                "completed": task.completed if task.completed is not None else t["completed"],
-                "username": t["username"]
+                "title": task.title.strip(),
+                "completed": task.completed,
+                "username": t["username"]  # Preserve the original username
             }
             write_data(TASKS_FILE, tasks)
-            return tasks[i]
+            return {"success": True, "task": tasks[i]}
+    
     raise HTTPException(status_code=404, detail="Task not found")
