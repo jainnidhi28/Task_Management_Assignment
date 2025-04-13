@@ -4,118 +4,152 @@ A full-stack task management application built with React and FastAPI.
 
 ## Features
 
-- User Authentication
-- Create, Read, Update, and Delete tasks
+- User authentication with username
+- Create, read, update, and delete tasks
 - Mark tasks as complete/incomplete
+- Modern UI with dark theme
 - Responsive design
 - Real-time updates
-- Clean and intuitive UI
+- Error handling and loading states
 
 ## Tech Stack
 
 ### Frontend
 - React (Hooks)
-- React Router
+- React Router for navigation
+- React Icons for UI elements
 - Axios for API calls
-- React Icons
 - CSS-in-JS for styling
 
 ### Backend
-- FastAPI
-- Python
-- JSON file storage
-- CORS middleware
+- FastAPI (Python)
+- JSON file-based storage
+- CORS middleware for cross-origin requests
+
+## Project Structure
+
+```
+task-manager/
+├── task-manager-frontend/     # React frontend
+│   ├── public/               # Static files
+│   ├── src/
+│   │   ├── api/             # API services
+│   │   ├── components/      # React components
+│   │   ├── pages/           # Page components
+│   │   ├── App.js           # Main application
+│   │   └── index.js         # Entry point
+│   ├── package.json         # Frontend dependencies
+│   └── README.md            # Frontend documentation
+│
+└── task-manager-backend/     # FastAPI backend
+    ├── main.py              # FastAPI application
+    ├── requirements.txt     # Backend dependencies
+    └── README.md           # Backend documentation
+```
 
 ## Setup Instructions
 
 ### Backend Setup
 1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+```bash
+cd task-manager-backend
+```
 
-2. Create a virtual environment:
-   ```bash
-   python -m venv venv
-   ```
+2. Create and activate virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
 
-3. Activate the virtual environment:
-   - Windows:
-     ```bash
-     venv\Scripts\activate
-     ```
-   - macOS/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-4. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+4. Start the server:
+```bash
+uvicorn main:app --reload
+```
 
-5. Start the backend server:
-   ```bash
-   uvicorn main:app --reload
-   ```
+The backend server will start at `http://localhost:8000`
 
 ### Frontend Setup
 1. Navigate to the frontend directory:
-   ```bash
-   cd task-manager-frontend
-   ```
+```bash
+cd task-manager-frontend
+```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
 3. Start the development server:
-   ```bash
-   npm start
-   ```
+```bash
+npm start
+```
+
+The frontend application will start at `http://localhost:3000`
 
 ## API Documentation
 
 ### Authentication
-- `POST /login` - Login with username
-- `POST /register` - Register new user
+- `POST /login`
+  - Request body: `{ "username": "string" }`
+  - Response: `{ "success": boolean, "error": "string" }`
 
 ### Tasks
-- `GET /tasks/{username}` - Get all tasks for a user
-- `POST /tasks` - Create a new task
-- `PUT /tasks/{task_id}` - Update a task
-- `PUT /tasks/complete/{task_id}` - Toggle task completion
-- `DELETE /tasks/{task_id}` - Delete a task
+- `GET /tasks`
+  - Response: `{ "success": boolean, "tasks": array, "error": "string" }`
 
-## Deployment
+- `POST /tasks`
+  - Request body: `{ "title": "string", "username": "string" }`
+  - Response: `{ "success": boolean, "error": "string" }`
 
-### Backend Deployment
-1. Install required packages:
-   ```bash
-   pip install fastapi uvicorn
-   ```
+- `PUT /tasks/{task_id}`
+  - Request body: `{ "title": "string", "completed": boolean }`
+  - Response: `{ "success": boolean, "error": "string" }`
 
-2. Start the production server:
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8000
-   ```
+- `DELETE /tasks/{task_id}`
+  - Response: `{ "success": boolean, "error": "string" }`
 
-### Frontend Deployment
-1. Build the production version:
-   ```bash
-   npm run build
-   ```
+- `POST /tasks/{task_id}/complete`
+  - Response: `{ "success": boolean, "error": "string" }`
 
-2. Deploy the build folder to your hosting service
+## Frontend Components
+
+### Pages
+- `LoginPage`: User authentication interface
+- `TaskPage`: Main task management interface
+
+### Components
+- `Navbar`: Navigation bar with user info and logout
+- `AddTaskForm`: Form for adding and editing tasks
+- `TaskList`: Display and manage tasks with actions
+
+## Development
+
+### Backend Development
+- The backend uses FastAPI for rapid API development
+- JSON file storage for simplicity
+- CORS enabled for frontend communication
+- Error handling and validation
+
+### Frontend Development
+- React functional components with hooks
+- Responsive design with CSS-in-JS
+- Loading states and error handling
+- Real-time updates
 
 ## Contributing
+
 1. Fork the repository
 2. Create your feature branch
 3. Commit your changes
 4. Push to the branch
-5. Create a new Pull Request
+5. Create a Pull Request
 
 ## License
+
 This project is licensed under the MIT License.
 
