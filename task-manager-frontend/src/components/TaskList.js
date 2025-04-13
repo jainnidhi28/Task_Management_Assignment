@@ -1,7 +1,21 @@
 import React from 'react';
 import { FaCheck, FaEdit, FaTrash, FaUndo } from 'react-icons/fa';
 
-function TaskList({ tasks, onComplete, onDelete, onEdit }) {
+function TaskList({ tasks = [], onComplete, onDelete, onEdit }) {
+  // Ensure tasks is an array and has unique IDs
+  const taskList = Array.isArray(tasks) ? tasks : [];
+  
+  // Create a map to track unique tasks
+  const uniqueTasks = new Map();
+  taskList.forEach(task => {
+    if (task && task.id) {
+      uniqueTasks.set(task.id, task);
+    }
+  });
+  
+  // Convert back to array
+  const uniqueTaskList = Array.from(uniqueTasks.values());
+
   return (
     <div style={{
       marginTop: '2rem',
@@ -25,7 +39,7 @@ function TaskList({ tasks, onComplete, onDelete, onEdit }) {
           </tr>
         </thead>
         <tbody>
-          {tasks.map(task => (
+          {uniqueTaskList.map(task => (
             <tr key={task.id} style={{
               borderBottom: '1px solid #dee2e6',
               backgroundColor: task.completed ? '#f8f9fa' : 'white'
@@ -91,7 +105,7 @@ function TaskList({ tasks, onComplete, onDelete, onEdit }) {
               </td>
             </tr>
           ))}
-          {tasks.length === 0 && (
+          {uniqueTaskList.length === 0 && (
             <tr>
               <td colSpan="3" style={{ padding: '1rem', textAlign: 'center' }}>
                 No tasks found. Add a new task to get started!

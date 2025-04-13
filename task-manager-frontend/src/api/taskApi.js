@@ -1,10 +1,14 @@
 // Create the file: task-manager-frontend/src/api/taskApi.js
 import axios from 'axios';
 
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// Use localhost for development
+const BASE_URL = 'http://localhost:8000';
 
 const api = axios.create({
-  baseURL: BASE_URL
+  baseURL: BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 api.interceptors.request.use(
@@ -24,21 +28,36 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    console.error('Response error:', error.response?.status, error.response?.data);
-    return Promise.reject(error);
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      console.error('Response error:', error.response.status, error.response.data);
+      return Promise.reject({
+        success: false,
+        error: error.response.data?.detail || 'An error occurred'
+      });
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('No response received:', error.request);
+      return Promise.reject({
+        success: false,
+        error: 'No response from server. Please check your connection.'
+      });
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      console.error('Error setting up request:', error.message);
+      return Promise.reject({
+        success: false,
+        error: 'Error setting up request'
+      });
+    }
   }
 );
 
 export const login = async (username) => {
   try {
-    const response = await fetch(`${BASE_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username }),
-    });
-    return await response.json();
+    const response = await api.post('/login', { username });
+    return response.data;
   } catch (error) {
     return { success: false, error: 'Failed to login' };
   }
@@ -46,25 +65,20 @@ export const login = async (username) => {
 
 export const getTasks = async (username) => {
   try {
-    const response = await fetch(`${BASE_URL}/tasks/${username}`);
-    const tasks = await response.json();
+    const response = await api.get(`/tasks/${username}`);
+    // Make sure we're returning an array of tasks
+    const tasks = Array.isArray(response.data.tasks) ? response.data.tasks : [];
     return { success: true, tasks };
   } catch (error) {
-    return { success: false, error: 'Failed to fetch tasks' };
+    console.error('Error fetching tasks:', error);
+    return { success: false, error: 'Failed to fetch tasks', tasks: [] };
   }
 };
 
 export const addTask = async (title, username) => {
   try {
-    const response = await fetch(`${BASE_URL}/tasks`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, username }),
-    });
-    const result = await response.json();
-    return { success: true, task: result };
+    const response = await api.post('/tasks', { title, username });
+    return { success: true, task: response.data };
   } catch (error) {
     return { success: false, error: 'Failed to add task' };
   }
@@ -73,49 +87,44 @@ export const addTask = async (title, username) => {
 export const updateTask = async (taskId, title, completed) => {
   try {
     const username = localStorage.getItem('username');
-    const response = await fetch(`${BASE_URL}/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id: taskId,
-        title: title,
-        completed: completed || false,
-        username: username
-      }),
+    const response = await api.put(`/tasks/${taskId}`, {
+      id: taskId,
+      title,
+      completed: completed || false,
+      username
     });
-    if (!response.ok) {
-      const errorData = await response.json();
-      return { success: false, error: errorData.detail || 'Failed to update task' };
+    if (response.data.success) {
+      return { success: true, task: response.data.task };
     }
-    const result = await response.json();
-    return { success: true, task: result };
+    return { success: false, error: response.data.detail || 'Failed to update task' };
   } catch (error) {
-    return { success: false, error: 'Failed to update task' };
+    console.error('Error updating task:', error);
+    return { success: false, error: error.response?.data?.detail || 'Failed to update task' };
   }
 };
 
 export const deleteTask = async (taskId) => {
   try {
-    const response = await fetch(`${BASE_URL}/tasks/${taskId}`, {
-      method: 'DELETE',
-    });
-    await response.json();
-    return { success: true };
+    const response = await api.delete(`/tasks/${taskId}`);
+    if (response.data.success) {
+      return { success: true, message: response.data.message };
+    }
+    return { success: false, error: response.data.detail || 'Failed to delete task' };
   } catch (error) {
-    return { success: false, error: 'Failed to delete task' };
+    console.error('Error deleting task:', error);
+    return { success: false, error: error.response?.data?.detail || 'Failed to delete task' };
   }
 };
 
 export const completeTask = async (taskId) => {
   try {
-    const response = await fetch(`${BASE_URL}/tasks/complete/${taskId}`, {
-      method: 'PUT',
-    });
-    const result = await response.json();
-    return { success: true, task: result };
+    const response = await api.put(`/tasks/complete/${taskId}`);
+    if (response.data.success) {
+      return { success: true, task: response.data.task };
+    }
+    return { success: false, error: response.data.detail || 'Failed to complete task' };
   } catch (error) {
-    return { success: false, error: 'Failed to complete task' };
+    console.error('Error completing task:', error);
+    return { success: false, error: error.response?.data?.detail || 'Failed to complete task' };
   }
 };

@@ -65,7 +65,7 @@ function TaskPage() {
       setError(null);
       const response = await completeTask(taskId);
       if (response.success) {
-        await fetchTasks(); // Refresh the task list to get the updated state
+        await fetchTasks(); // Refresh the task list
       } else {
         setError(response.error || 'Failed to update task status');
       }
@@ -83,7 +83,7 @@ function TaskPage() {
       setError(null);
       const response = await deleteTask(taskId);
       if (response.success) {
-        await fetchTasks();
+        await fetchTasks(); // Refresh the task list
       } else {
         setError(response.error || 'Failed to delete task');
       }
@@ -118,7 +118,7 @@ function TaskPage() {
       
       if (response.success) {
         setEditingTask(null);
-        await fetchTasks();
+        await fetchTasks(); // Refresh the task list
       } else {
         setError(response.error || 'Failed to update task');
       }
