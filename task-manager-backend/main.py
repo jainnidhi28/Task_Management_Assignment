@@ -11,15 +11,20 @@ import os
 
 app = FastAPI()
 
+origins = [
+    "http://localhost:3000",  
+    "https://task-manager-frontend.vercel.app",  
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins during development
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ----- Models -----
+
 class LoginRequest(BaseModel):
     username: str
 
@@ -33,11 +38,9 @@ class CreateTaskRequest(BaseModel):
     title: str
     username: str
 
-# ----- File helpers -----
 TASKS_FILE = 'tasks.json'
 USERS_FILE = 'users.json'
 
-# Ensure files exist
 if not os.path.exists(TASKS_FILE):
     with open(TASKS_FILE, 'w') as f:
         json.dump([], f)
@@ -54,7 +57,7 @@ def write_data(file_path, data):
     with open(file_path, 'w') as f:
         json.dump(data, f, indent=2)
 
-# ----- Routes -----
+
 
 @app.get("/")
 def root():
@@ -111,7 +114,7 @@ async def complete_task(task_id: int):
     tasks = read_data(TASKS_FILE)
     for task in tasks:
         if task["id"] == task_id:
-            task["completed"] = not task["completed"]  # Toggle completion status
+            task["completed"] = not task["completed"] 
             write_data(TASKS_FILE, tasks)
             return {"success": True, "task": task}
     raise HTTPException(status_code=404, detail="Task not found")
@@ -135,12 +138,11 @@ async def update_task(task_id: int, task: Task):
             if not task.title or not task.title.strip():
                 raise HTTPException(status_code=400, detail="Title cannot be empty")
             
-            # Update the task while preserving the username and id
             tasks[i] = {
                 "id": task_id,
                 "title": task.title.strip(),
                 "completed": task.completed,
-                "username": t["username"]  # Preserve the original username
+                "username": t["username"]  
             }
             write_data(TASKS_FILE, tasks)
             return {"success": True, "task": tasks[i]}
