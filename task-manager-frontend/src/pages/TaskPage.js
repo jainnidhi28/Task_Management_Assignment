@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTasks, addTask, completeTask, deleteTask, updateTask } from '../api/taskApi';
@@ -28,7 +27,11 @@ function TaskPage() {
       setError(null);
       const username = localStorage.getItem('username');
       const response = await getTasks(username);
-      setTasks(response);
+      if (response.success) {
+        setTasks(response.tasks);
+      } else {
+        setError(response.error || 'Failed to fetch tasks');
+      }
     } catch (error) {
       console.error('Error fetching tasks:', error);
       setError('Failed to fetch tasks');
@@ -45,8 +48,12 @@ function TaskPage() {
         setError('Title and username are required');
         return;
       }
-      const newTask = await addTask(title, username);
-      setTasks(prevTasks => [...prevTasks, newTask]);
+      const response = await addTask(title, username);
+      if (response.success) {
+        await fetchTasks();
+      } else {
+        setError(response.error || 'Failed to create task');
+      }
     } catch (error) {
       console.error('Error creating task:', error);
       setError('Failed to create task');
@@ -56,37 +63,33 @@ function TaskPage() {
   const handleCompleteTask = async (taskId) => {
     try {
       setError(null);
-      setTasks(prevTasks =>
-        prevTasks.map(task =>
-          task.id === taskId
-            ? { ...task, completed: !task.completed }
-            : task
-        )
-      );
-      
-      const updatedTask = await completeTask(taskId);
-      
-      setTasks(prevTasks =>
-        prevTasks.map(task =>
-          task.id === taskId ? updatedTask : task
-        )
-      );
+      const response = await completeTask(taskId);
+      if (response.success) {
+        await fetchTasks(); // Refresh the task list to get the updated state
+      } else {
+        setError(response.error || 'Failed to update task status');
+      }
     } catch (error) {
       console.error('Error completing task:', error);
       setError('Failed to update task status');
-      await fetchTasks();
     }
   };
 
   const handleDeleteTask = async (taskId) => {
+    if (!window.confirm('Are you sure you want to delete this task?')) {
+      return;
+    }
     try {
       setError(null);
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-      await deleteTask(taskId);
+      const response = await deleteTask(taskId);
+      if (response.success) {
+        await fetchTasks();
+      } else {
+        setError(response.error || 'Failed to delete task');
+      }
     } catch (error) {
       console.error('Error deleting task:', error);
       setError('Failed to delete task');
-      await fetchTasks();
     }
   };
 
@@ -98,23 +101,27 @@ function TaskPage() {
   const handleUpdateTask = async (title) => {
     try {
       setError(null);
-      const username = localStorage.getItem('username');
-      if (!title || !username) {
-        setError('Title and username are required');
+      if (!title) {
+        setError('Title is required');
         return;
       }
-      const updatedTask = await updateTask(
+      if (!editingTask) {
+        setError('No task selected for editing');
+        return;
+      }
+      
+      const response = await updateTask(
         editingTask.id,
-        title,
-        editingTask.completed,
-        username
+        title.trim(),
+        editingTask.completed
       );
-      setTasks(prevTasks =>
-        prevTasks.map(task =>
-          task.id === editingTask.id ? updatedTask : task
-        )
-      );
-      setEditingTask(null);
+      
+      if (response.success) {
+        setEditingTask(null);
+        await fetchTasks();
+      } else {
+        setError(response.error || 'Failed to update task');
+      }
     } catch (error) {
       console.error('Error updating task:', error);
       setError('Failed to update task');

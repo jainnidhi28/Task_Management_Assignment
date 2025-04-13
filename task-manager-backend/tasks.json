@@ -25,61 +25,61 @@
   },
   {
     "id": 7,
-    "title": "sam Hello",
-    "completed": false,
-    "username": "Nidhi_28"
-  },
-  {
-    "id": 7,
     "title": "Hello Hiral",
     "completed": false,
     "username": "Samyak_31"
   },
   {
+    "id": 7,
+    "title": "Backend",
+    "completed": false,
+    "username": "Samyak_31"
+  },
+  {
+    "id": 8,
+    "title": "RestAPI",
+    "completed": false,
+    "username": "Samyak_31"
+  },
+  {
+    "id": 9,
+    "title": "FASTAPI",
+    "completed": false,
+    "username": "Samyak_31"
+  },
+  {
     "id": 10,
-    "title": "Hello Python",
+    "title": "C++",
     "completed": false,
     "username": "Samyak_31"
   },
   {
     "id": 11,
-    "title": "Hello java",
-    "completed": false,
-    "username": "Samyak_31"
-  },
-  {
-    "id": 10,
-    "title": "Hello hi",
-    "completed": false,
-    "username": "Samyak_31"
-  },
-  {
-    "id": 11,
-    "title": "Hello Nidh",
+    "title": "Java",
     "completed": false,
     "username": "Samyak_31"
   },
   {
     "id": 12,
-    "title": "Hello Pratham",
+    "title": "PYTHON",
     "completed": false,
     "username": "Samyak_31"
   },
   {
     "id": 13,
-    "title": "Helo shruti",
+    "title": "DJANGO",
     "completed": false,
     "username": "Samyak_31"
   },
   {
     "id": 14,
-    "title": "Helllo sam",
+    "title": "DRF",
     "completed": false,
     "username": "Samyak_31"
   },
   {
-    "id": 15,
-    "title": "sammy",
+    "id": 14,
+    "title": "Frontend",
     "completed": false,
     "username": "Samyak_31"
   }
