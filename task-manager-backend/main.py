@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 import json
 import uuid
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,17 +11,21 @@ import os
 
 app = FastAPI()
 
+# Update CORS configuration
 origins = [
-    "http://localhost:3000",  
-    "https://task-manager-frontend.vercel.app",  
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "https://task-manager-frontend.vercel.app",
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
+    max_age=3600,
 )
 
 
@@ -29,7 +33,7 @@ class LoginRequest(BaseModel):
     username: str
 
 class Task(BaseModel):
-    id: Optional[int] = None
+    id: Optional[str] = None
     title: str
     completed: bool
     username: str
@@ -81,11 +85,10 @@ def login(user: LoginRequest):
     if user.username not in users:
         users.append(user.username)
         write_data(USERS_FILE, users)
-    return {"message": "Login successful"}
+    return {"success": True, "message": "Login successful"}
 
 @app.get("/tasks")
 def get_all_tasks(request: Request):
-    # Get username from query parameters
     username = request.query_params.get("username")
     if not username:
         raise HTTPException(status_code=400, detail="Username is required")
@@ -95,22 +98,23 @@ def get_all_tasks(request: Request):
 def add_task(task: CreateTaskRequest):
     tasks = read_data(TASKS_FILE)
     new_task = {
-        "id": len(tasks) + 1,
+        "id": str(uuid.uuid4()),
         "title": task.title,
         "completed": False,
         "username": task.username
     }
     tasks.append(new_task)
     write_data(TASKS_FILE, tasks)
-    return new_task
+    return {"success": True, "task": new_task}
 
 @app.get("/tasks/{username}")
 def get_tasks(username: str):
     tasks = read_data(TASKS_FILE)
-    return [task for task in tasks if task["username"] == username]
+    user_tasks = [task for task in tasks if task["username"] == username]
+    return {"success": True, "tasks": user_tasks}
 
 @app.put("/tasks/complete/{task_id}")
-async def complete_task(task_id: int):
+async def complete_task(task_id: str):
     tasks = read_data(TASKS_FILE)
     for task in tasks:
         if task["id"] == task_id:
@@ -120,21 +124,20 @@ async def complete_task(task_id: int):
     raise HTTPException(status_code=404, detail="Task not found")
 
 @app.delete("/tasks/{task_id}")
-def delete_task(task_id: int):
+def delete_task(task_id: str):
     tasks = read_data(TASKS_FILE)
     for i, task in enumerate(tasks):
         if task["id"] == task_id:
             del tasks[i]
             write_data(TASKS_FILE, tasks)
-            return {"message": "Task deleted"}
+            return {"success": True, "message": "Task deleted"}
     raise HTTPException(status_code=404, detail="Task not found")
 
 @app.put("/tasks/{task_id}")
-async def update_task(task_id: int, task: Task):
+async def update_task(task_id: str, task: Task):
     tasks = read_data(TASKS_FILE)
     for i, t in enumerate(tasks):
         if t["id"] == task_id:
-            # Validate input
             if not task.title or not task.title.strip():
                 raise HTTPException(status_code=400, detail="Title cannot be empty")
             
@@ -142,7 +145,7 @@ async def update_task(task_id: int, task: Task):
                 "id": task_id,
                 "title": task.title.strip(),
                 "completed": task.completed,
-                "username": t["username"]  
+                "username": t["username"]
             }
             write_data(TASKS_FILE, tasks)
             return {"success": True, "task": tasks[i]}
