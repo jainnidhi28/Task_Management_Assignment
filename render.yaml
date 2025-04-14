@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: task-manager-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd task-manager-backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: . 
