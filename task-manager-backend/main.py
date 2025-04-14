@@ -10,30 +10,26 @@ from fastapi.templating import Jinja2Templates
 import os
 import logging
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Update CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins
+    allow_origins=["*"], 
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"], 
+    allow_headers=["*"], 
     expose_headers=["*"],
     max_age=3600,
 )
 
-# Add health check endpoint
 @app.get("/health")
 async def health_check():
     logger.info("Health check requested")
     return {"status": "healthy", "message": "API is running"}
 
-# Add error handling middleware
 @app.middleware("http")
 async def add_error_handling(request: Request, call_next):
     try:
