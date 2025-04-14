@@ -1,7 +1,5 @@
-// Create the file: task-manager-frontend/src/api/taskApi.js
 import axios from 'axios';
 
-// Use localhost for development
 const BASE_URL = 'http://localhost:8000';
 
 const api = axios.create({
@@ -29,22 +27,19 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
+     
       console.error('Response error:', error.response.status, error.response.data);
       return Promise.reject({
         success: false,
         error: error.response.data?.detail || 'An error occurred'
       });
     } else if (error.request) {
-      // The request was made but no response was received
       console.error('No response received:', error.request);
       return Promise.reject({
         success: false,
         error: 'No response from server. Please check your connection.'
       });
     } else {
-      // Something happened in setting up the request that triggered an Error
       console.error('Error setting up request:', error.message);
       return Promise.reject({
         success: false,
@@ -66,7 +61,6 @@ export const login = async (username) => {
 export const getTasks = async (username) => {
   try {
     const response = await api.get(`/tasks/${username}`);
-    // Make sure we're returning an array of tasks
     const tasks = Array.isArray(response.data.tasks) ? response.data.tasks : [];
     return { success: true, tasks };
   } catch (error) {
@@ -87,19 +81,47 @@ export const addTask = async (title, username) => {
 export const updateTask = async (taskId, title, completed) => {
   try {
     const username = localStorage.getItem('username');
+    console.log('Updating task:', { taskId, title, completed, username });
+    
     const response = await api.put(`/tasks/${taskId}`, {
-      id: taskId,
       title,
       completed: completed || false,
       username
     });
+    
+    console.log('Update response:', response.data);
+    
     if (response.data.success) {
       return { success: true, task: response.data.task };
     }
-    return { success: false, error: response.data.detail || 'Failed to update task' };
+    return { 
+      success: false, 
+      error: response.data.detail || 'Failed to update task' 
+    };
   } catch (error) {
-    console.error('Error updating task:', error);
-    return { success: false, error: error.response?.data?.detail || 'Failed to update task' };
+    console.error('Error updating task:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      config: error.config
+    });
+    
+    if (error.response) {
+      return { 
+        success: false, 
+        error: error.response.data?.detail || 'Failed to update task' 
+      };
+    } else if (error.request) {
+      return { 
+        success: false, 
+        error: 'No response from server. Please check if the backend is running.' 
+      };
+    } else {
+      return { 
+        success: false, 
+        error: `Error: ${error.message}` 
+      };
+    }
   }
 };
 

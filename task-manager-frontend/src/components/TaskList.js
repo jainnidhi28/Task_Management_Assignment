@@ -2,10 +2,8 @@ import React from 'react';
 import { FaCheck, FaEdit, FaTrash, FaUndo } from 'react-icons/fa';
 
 function TaskList({ tasks = [], onComplete, onDelete, onEdit }) {
-  // Ensure tasks is an array and has unique IDs
   const taskList = Array.isArray(tasks) ? tasks : [];
   
-  // Create a map to track unique tasks
   const uniqueTasks = new Map();
   taskList.forEach(task => {
     if (task && task.id) {
@@ -13,7 +11,6 @@ function TaskList({ tasks = [], onComplete, onDelete, onEdit }) {
     }
   });
   
-  // Convert back to array
   const uniqueTaskList = Array.from(uniqueTasks.values());
 
   return (
