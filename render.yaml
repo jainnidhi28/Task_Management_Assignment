@@ -4,5 +4,5 @@ services:
     runtime: python
     buildCommand: |
       pip install -r requirements.txt
-    startCommand: cd task-manager-backend && python -c "import uvicorn; uvicorn.run('main:app', host='0.0.0.0', port=int('$PORT'))"
-    rootDir: . 
+    startCommand: cd task-manager-backend && PYTHONPATH=$PYTHONPATH:. uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: task-manager-backend
