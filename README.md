@@ -141,6 +141,11 @@ The frontend application will start at `http://localhost:3000`
 - Loading states and error handling
 - Real-time updates
 
+
+<img width="1429" alt="Screenshot 2025-04-14 at 12 08 25 PM" src="https://github.com/user-attachments/assets/0a3b21c1-dcf5-4474-adbc-90e64b1a15f4" />
+<img width="1429" alt="Screenshot 2025-04-14 at 12 07 50 PM" src="https://github.com/user-attachments/assets/2a7e5b43-3695-4485-9239-f99c971f7984" />
+
+
 ## Contributing
 
 1. Fork the repository
